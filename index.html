@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Калькулятор зарплаты</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 600px;
+            margin: 30px auto;
+            padding: 20px;
+            text-align: center;
+        }
+        input {
+            padding: 10px;
+            font-size: 16px;
+            margin: 10px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Калькулятор зарплаты</h1>
+    <p>Введите сумму продаж в рублях:</p>
+    <input type="number" id="sales" placeholder="Например, 1500000">
+    <button onclick="calculate()">Рассчитать</button>
+    <h2>Зарплата: <span id="result">0</span> ₽</h2>
+
+    <script>
+        function calculate() {
+            const sales = parseFloat(document.getElementById('sales').value);
+            let salary = 0;
+
+            if (sales <= 1_000_000) {
+                salary = sales * 0.03;
+            } else if (sales <= 2_000_000) {
+                salary = 30000 + (sales - 1_000_000) * 0.04;
+            } else if (sales <= 4_000_000) {
+                salary = 70000 + (sales - 2_000_000) * 0.04;
+            } else {
+                salary = 150000 + (sales - 4_000_000) * 0.05 + 10000;
+            }
+
+            document.getElementById('result').textContent = salary.toFixed(2);
+        }
+    </script>
+</body>
+</html>
