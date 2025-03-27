@@ -23,14 +23,17 @@
             max-width: 600px;
             margin: 0 auto;
         }
-        h1, h2 {
+        h1 {
             margin: 0 0 10px 0;
             text-align: center;
+            font-size: 22px; /* Размер шрифта для "Калькулятор зарплаты" (было ~28px) */
         }
         h2 {
             color: #555;
             font-weight: normal;
             margin-bottom: 20px;
+            text-align: center;
+            font-size: 18px; /* Размер шрифта для "Анны Баровой" (было ~24px) */
         }
         input {
             width: 100%;
@@ -39,6 +42,8 @@
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 5px;
+            text-align: right;
+            letter-spacing: 1px;
         }
         button {
             width: 100%;
@@ -92,16 +97,23 @@
             .result-item {
                 font-size: 16px;
             }
+            /* Дополнительные настройки для десктопов */
+            h1 {
+                font-size: 24px; /* Чуть больше на больших экранах */
+            }
+            h2 {
+                font-size: 20px;
+            }
         }
     </style>
 </head>
 <body>
     <div class="calculator">
-        <h1>КАЛЬКУЛЯТОР ЗАРПЛАТЫ</h1>
+        <h1>Калькулятор зарплаты</h1>
         <h2>Анны Баровой</h2>
         
         <p>Введите сумму продаж в рублях:</p>
-        <input type="number" id="sales" placeholder="Например, 1500000">
+        <input type="text" id="sales" placeholder="Например, 1 500 000" inputmode="numeric">
         <button onclick="calculate()">Рассчитать</button>
         
         <div class="result" id="result">
@@ -129,9 +141,51 @@
     </div>
 
     <script>
+        // Функция для форматирования числа с пробелами
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+        }
+
+        // Функция для удаления всех пробелов из строки
+        function removeSpaces(str) {
+            return str.replace(/\s/g, '');
+        }
+
+        const salesInput = document.getElementById('sales');
+        
+        // Обработчик ввода для форматирования числа
+        salesInput.addEventListener('input', function(e) {
+            // Сохраняем позицию курсора
+            const cursorPosition = e.target.selectionStart;
+            
+            // Удаляем все пробелы и нечисловые символы
+            let value = removeSpaces(this.value);
+            value = value.replace(/[^\d]/g, '');
+            
+            // Форматируем число с пробелами
+            if (value.length > 0) {
+                const num = parseInt(value, 10);
+                if (!isNaN(num)) {
+                    this.value = formatNumber(num);
+                    
+                    // Восстанавливаем позицию курсора с учетом добавленных пробелов
+                    const addedSpaces = Math.floor((this.value.length - value.length) / 3);
+                    e.target.setSelectionRange(cursorPosition + addedSpaces, cursorPosition + addedSpaces);
+                }
+            } else {
+                this.value = '';
+            }
+        });
+
         function calculate() {
-            const sales = parseFloat(document.getElementById('sales').value);
-            if (isNaN(sales)) return;
+            // Получаем значение и удаляем пробелы перед расчетом
+            const salesValue = removeSpaces(document.getElementById('sales').value);
+            const sales = parseFloat(salesValue);
+            
+            if (isNaN(sales) || salesValue === '') {
+                alert('Пожалуйста, введите корректную сумму');
+                return;
+            }
             
             const advance = 10000;
             let rate = 0;
@@ -155,10 +209,10 @@
             }
 
             // Отображение результатов
-            document.getElementById('advance').textContent = advance.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('bonus').textContent = bonus.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('salary').textContent = (salary - advance).toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('total').textContent = salary.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('advance').textContent = formatNumber(advance) + ' ₽';
+            document.getElementById('bonus').textContent = formatNumber(bonus) + ' ₽';
+            document.getElementById('salary').textContent = formatNumber(salary - advance) + ' ₽';
+            document.getElementById('total').textContent = formatNumber(salary) + ' ₽';
             document.getElementById('rate').textContent = rate + '%';
             document.getElementById('result').style.display = 'block';
             
