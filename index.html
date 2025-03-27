@@ -26,14 +26,14 @@
         h1 {
             margin: 0 0 10px 0;
             text-align: center;
-            font-size: 22px; /* Размер шрифта для "Калькулятор зарплаты" (было ~28px) */
+            font-size: 23px;
         }
         h2 {
             color: #555;
             font-weight: normal;
-            margin-bottom: 20px;
+            margin-bottom: 21px;
             text-align: center;
-            font-size: 18px; /* Размер шрифта для "Анны Баровой" (было ~24px) */
+            font-size: 18px;
         }
         input {
             width: 100%;
@@ -97,9 +97,8 @@
             .result-item {
                 font-size: 16px;
             }
-            /* Дополнительные настройки для десктопов */
             h1 {
-                font-size: 24px; /* Чуть больше на больших экранах */
+                font-size: 24px;
             }
             h2 {
                 font-size: 20px;
@@ -155,8 +154,9 @@
         
         // Обработчик ввода для форматирования числа
         salesInput.addEventListener('input', function(e) {
-            // Сохраняем позицию курсора
+            // Сохраняем позицию курсора и выделенный текст
             const cursorPosition = e.target.selectionStart;
+            const selectionEnd = e.target.selectionEnd;
             
             // Удаляем все пробелы и нечисловые символы
             let value = removeSpaces(this.value);
@@ -166,11 +166,19 @@
             if (value.length > 0) {
                 const num = parseInt(value, 10);
                 if (!isNaN(num)) {
-                    this.value = formatNumber(num);
+                    const formatted = formatNumber(num);
+                    this.value = formatted;
                     
-                    // Восстанавливаем позицию курсора с учетом добавленных пробелов
-                    const addedSpaces = Math.floor((this.value.length - value.length) / 3);
-                    e.target.setSelectionRange(cursorPosition + addedSpaces, cursorPosition + addedSpaces);
+                    // Восстанавливаем позицию курсора
+                    let newCursorPosition = cursorPosition;
+                    
+                    // Корректируем позицию курсора с учетом добавленных пробелов
+                    if (cursorPosition > 0) {
+                        const beforeCursor = removeSpaces(this.value.substring(0, cursorPosition));
+                        newCursorPosition = beforeCursor.length + Math.floor(beforeCursor.length / 3);
+                    }
+                    
+                    e.target.setSelectionRange(newCursorPosition, newCursorPosition);
                 }
             } else {
                 this.value = '';
@@ -208,10 +216,13 @@
                 document.getElementById('bonus-row').style.display = 'flex';
             }
 
+            // Округляем до 2 знаков после запятой
+            salary = Math.round(salary * 100) / 100;
+            
             // Отображение результатов
             document.getElementById('advance').textContent = formatNumber(advance) + ' ₽';
             document.getElementById('bonus').textContent = formatNumber(bonus) + ' ₽';
-            document.getElementById('salary').textContent = formatNumber(salary - advance) + ' ₽';
+            document.getElementById('salary').textContent = formatNumber(Math.round((salary - advance) * 100) / 100) + ' ₽';
             document.getElementById('total').textContent = formatNumber(salary) + ' ₽';
             document.getElementById('rate').textContent = rate + '%';
             document.getElementById('result').style.display = 'block';
