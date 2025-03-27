@@ -75,10 +75,6 @@
                 <span>Аванс:</span>
                 <span id="advance">10 000 ₽</span>
             </div>
-            <div class="result-item">
-                <span>Зарплата по ставке:</span>
-                <span id="rate-salary">0 ₽</span>
-            </div>
             <div class="result-item bonus" id="bonus-row" style="display: none;">
                 <span>Бонус за 4 млн+:</span>
                 <span id="bonus">10 000 ₽</span>
@@ -103,7 +99,7 @@
             const sales = parseFloat(document.getElementById('sales').value);
             if (isNaN(sales)) return;
             
-            const advance = 10000; // Фиксированный аванс
+            const advance = 10000;
             let rate = 0;
             let bonus = 0;
             let salary = 0;
@@ -126,7 +122,6 @@
 
             // Отображение результатов
             document.getElementById('advance').textContent = advance.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('rate-salary').textContent = (salary - bonus).toLocaleString('ru-RU') + ' ₽';
             document.getElementById('bonus').textContent = bonus.toLocaleString('ru-RU') + ' ₽';
             document.getElementById('salary').textContent = (salary - advance).toLocaleString('ru-RU') + ' ₽';
             document.getElementById('total').textContent = salary.toLocaleString('ru-RU') + ' ₽';
