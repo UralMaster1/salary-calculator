@@ -76,20 +76,8 @@
                 <span id="advance">10 000 ₽</span>
             </div>
             <div class="result-item">
-                <span>До 1 млн (2%):</span>
-                <span id="part1">0 ₽</span>
-            </div>
-            <div class="result-item">
-                <span>1-2 млн (3%):</span>
-                <span id="part2">0 ₽</span>
-            </div>
-            <div class="result-item">
-                <span>2-4 млн (4%):</span>
-                <span id="part3">0 ₽</span>
-            </div>
-            <div class="result-item">
-                <span>Свыше 4 млн (5%):</span>
-                <span id="part4">0 ₽</span>
+                <span>Зарплата по ставке:</span>
+                <span id="rate-salary">0 ₽</span>
             </div>
             <div class="result-item bonus" id="bonus-row" style="display: none;">
                 <span>Бонус за 4 млн+:</span>
@@ -103,6 +91,10 @@
                 <span>Итого к выплате:</span>
                 <span id="total">0 ₽</span>
             </div>
+            <div class="result-item">
+                <span>Применённая ставка:</span>
+                <span id="rate">0%</span>
+            </div>
         </div>
     </div>
 
@@ -112,37 +104,38 @@
             if (isNaN(sales)) return;
             
             const advance = 10000; // Фиксированный аванс
-            let part1 = 0, part2 = 0, part3 = 0, part4 = 0, bonus = 0, salary = 0;
+            let rate = 0;
+            let bonus = 0;
+            let salary = 0;
 
-            if (sales > 0) {
-                part1 = Math.min(sales, 1_000_000) * 0.02;
-                if (sales > 1_000_000) {
-                    part2 = (Math.min(sales, 2_000_000) - 1_000_000) * 0.03;
-                }
-                if (sales > 2_000_000) {
-                    part3 = (Math.min(sales, 4_000_000) - 2_000_000) * 0.04;
-                }
-                if (sales > 4_000_000) {
-                    part4 = (sales - 4_000_000) * 0.05;
-                    bonus = 10000;
-                    document.getElementById('bonus-row').style.display = 'flex';
-                } else {
-                    document.getElementById('bonus-row').style.display = 'none';
-                }
-                
-                salary = part1 + part2 + part3 + part4 + bonus;
+            if (sales <= 1_000_000) {
+                rate = 2;
+                salary = sales * 0.02;
+            } else if (sales <= 2_000_000) {
+                rate = 3;
+                salary = sales * 0.03;
+            } else if (sales <= 4_000_000) {
+                rate = 4;
+                salary = sales * 0.04;
+            } else {
+                rate = 5;
+                salary = sales * 0.05;
+                bonus = 10000;
+                document.getElementById('bonus-row').style.display = 'flex';
             }
 
             // Отображение результатов
             document.getElementById('advance').textContent = advance.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('part1').textContent = part1.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('part2').textContent = part2.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('part3').textContent = part3.toLocaleString('ru-RU') + ' ₽';
-            document.getElementById('part4').textContent = part4.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('rate-salary').textContent = (salary - bonus).toLocaleString('ru-RU') + ' ₽';
             document.getElementById('bonus').textContent = bonus.toLocaleString('ru-RU') + ' ₽';
             document.getElementById('salary').textContent = (salary - advance).toLocaleString('ru-RU') + ' ₽';
             document.getElementById('total').textContent = salary.toLocaleString('ru-RU') + ' ₽';
+            document.getElementById('rate').textContent = rate + '%';
             document.getElementById('result').style.display = 'block';
+            
+            if (sales <= 4_000_000) {
+                document.getElementById('bonus-row').style.display = 'none';
+            }
         }
     </script>
 </body>
