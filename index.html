@@ -103,17 +103,15 @@
             margin: 10px 0;
             font-size: 15px;
             padding: 8px 0;
-            border-bottom: 1px solid #f1f1f1;
-        }
-
-        .result-item:last-child {
-            border-bottom: none;
         }
 
         .total {
             font-weight: 600;
             color: #2c3e50;
             font-size: 16px;
+            border-top: 1px solid #f1f1f1;
+            padding-top: 12px;
+            margin-top: 12px;
         }
 
         .bonus {
@@ -194,19 +192,26 @@
         
         salesInput.addEventListener('input', function(e) {
             const cursorPosition = e.target.selectionStart;
+            const originalLength = this.value.length;
             let value = removeSpaces(this.value);
             value = value.replace(/[^\d]/g, '');
             
             if (value.length > 0) {
                 const num = parseInt(value, 10);
                 if (!isNaN(num)) {
-                    this.value = formatNumber(num).replace('.00', '');
-                    let newCursorPosition = cursorPosition;
-                    if (cursorPosition > 0) {
-                        const beforeCursor = removeSpaces(this.value.substring(0, cursorPosition));
-                        newCursorPosition = beforeCursor.length + Math.floor(beforeCursor.length / 3);
+                    const formatted = formatNumber(num).replace('.00', '');
+                    this.value = formatted;
+                    
+                    // Корректировка позиции курсора
+                    const addedSpaces = (this.value.match(/ /g) || []).length;
+                    const newCursorPosition = cursorPosition + addedSpaces - (originalLength - this.value.length);
+                    
+                    // Устанавливаем курсор в конец, если он "уплыл"
+                    if (cursorPosition >= originalLength) {
+                        e.target.setSelectionRange(this.value.length, this.value.length);
+                    } else {
+                        e.target.setSelectionRange(newCursorPosition, newCursorPosition);
                     }
-                    e.target.setSelectionRange(newCursorPosition, newCursorPosition);
                 }
             } else {
                 this.value = '';
