@@ -1,39 +1,56 @@
 <!DOCTYPE html>
 <html>
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Калькулятор зарплаты</title>
     <style>
+        * {
+            box-sizing: border-box;
+        }
         body {
             font-family: Arial, sans-serif;
-            max-width: 600px;
-            margin: 30px auto;
+            margin: 0;
             padding: 20px;
-            text-align: center;
             background-color: #f5f5f5;
+            line-height: 1.6;
         }
         .calculator {
             background: white;
-            padding: 30px;
+            padding: 20px;
             border-radius: 10px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        h1, h2 {
+            margin: 0 0 10px 0;
+            text-align: center;
+        }
+        h2 {
+            color: #555;
+            font-weight: normal;
+            margin-bottom: 20px;
         }
         input {
-            padding: 10px;
+            width: 100%;
+            padding: 12px;
             font-size: 16px;
-            margin: 10px;
-            width: 200px;
+            margin: 10px 0;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 5px;
         }
         button {
-            padding: 10px 20px;
+            width: 100%;
+            padding: 12px;
             font-size: 16px;
             background-color: #4CAF50;
             color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
+            margin: 10px 0;
         }
         button:hover {
             background-color: #45a049;
@@ -44,21 +61,37 @@
             background: #f9f9f9;
             padding: 15px;
             border-radius: 5px;
+            display: none;
         }
         .result-item {
             display: flex;
             justify-content: space-between;
-            margin: 8px 0;
+            margin: 12px 0;
+            font-size: 15px;
         }
         .total {
             font-weight: bold;
             border-top: 1px solid #ddd;
-            padding-top: 10px;
-            margin-top: 10px;
+            padding-top: 12px;
+            margin-top: 12px;
+            font-size: 16px;
         }
         .bonus {
             color: #4CAF50;
             font-weight: bold;
+        }
+        @media (min-width: 768px) {
+            .calculator {
+                padding: 30px;
+            }
+            input, button {
+                width: 200px;
+                margin: 10px auto;
+                display: block;
+            }
+            .result-item {
+                font-size: 16px;
+            }
         }
     </style>
 </head>
@@ -66,11 +99,12 @@
     <div class="calculator">
         <h1>Калькулятор зарплаты</h1>
         <h2>Анны Баровой</h2>
+        
         <p>Введите сумму продаж в рублях:</p>
         <input type="number" id="sales" placeholder="Например, 1500000">
         <button onclick="calculate()">Рассчитать</button>
         
-        <div class="result" id="result" style="display: none;">
+        <div class="result" id="result">
             <div class="result-item">
                 <span>Аванс:</span>
                 <span id="advance">10 000 ₽</span>
@@ -131,6 +165,9 @@
             if (sales <= 4_000_000) {
                 document.getElementById('bonus-row').style.display = 'none';
             }
+
+            // Прокрутка к результатам после расчета
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         }
     </script>
 </body>
